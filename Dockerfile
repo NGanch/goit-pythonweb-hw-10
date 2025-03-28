@@ -1,20 +1,13 @@
-# Вказуємо базовий образ для Node.js
-FROM node:16
+FROM python:3.12-slim
 
-# Створюємо робочу директорію в контейнері
 WORKDIR /app
 
-# Копіюємо файл package.json та package-lock.json для встановлення залежностей
-COPY package*.json ./
+COPY requirements.txt .
 
-# Встановлюємо залежності
-RUN npm install
+RUN pip install --no-cache-dir -r requirements.txt
 
-# Копіюємо весь код додатку в контейнер
 COPY . .
 
-# Відкриваємо порт 5000 для доступу до серверу
-EXPOSE 5000
+EXPOSE 8000
 
-# Команда для запуску сервера
-CMD ["npm", "start"]
+CMD ["sh", "-c", "alembic upgrade head && uvicorn main:app --host 0.0.0.0 --port 8000"]
